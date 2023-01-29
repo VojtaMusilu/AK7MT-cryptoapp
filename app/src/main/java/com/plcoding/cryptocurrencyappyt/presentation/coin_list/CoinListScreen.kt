@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.plcoding.cryptocurrencyappyt.presentation.Screen
 import androidx.navigation.NavController
+import com.plcoding.cryptocurrencyappyt.presentation.Screen
 import com.plcoding.cryptocurrencyappyt.presentation.coin_list.components.CoinListItem
 
 @Composable
