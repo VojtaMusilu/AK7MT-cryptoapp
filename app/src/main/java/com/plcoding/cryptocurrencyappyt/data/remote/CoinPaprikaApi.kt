@@ -9,6 +9,9 @@ interface CoinPaprikaApi {
     @GET("/v1/coins")
     suspend fun getCoins(): List<CoinDto>
 
+    @GET("/v1/search/?q={query}")
+    suspend fun getCoins(@Path("query") query: String): List<CoinDto>
+
     @GET("/v1/coins/{coinId}")
     suspend fun getCoinById(@Path("coinId") coinId: String): CoinDetailDto
 }
