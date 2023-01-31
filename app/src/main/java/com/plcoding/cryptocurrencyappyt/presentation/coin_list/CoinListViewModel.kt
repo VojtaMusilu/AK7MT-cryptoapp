@@ -10,15 +10,18 @@ import com.plcoding.cryptocurrencyappyt.domain.repository.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import com.plcoding.cryptocurrencyappyt.domain.use_case.get_coins.GetCoinsUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 
 @HiltViewModel
-class CoinListViewModel @Inject constructor(private val repository: CoinRepository)
+class CoinListViewModel @Inject constructor(private val repository: CoinRepository, private val getCoinsUseCase: GetCoinsUseCase)
     : ViewModel() {
 
+    private val _state = mutableStateOf(CoinListState())
     private var searchJob: Job? = null
 
     var state by mutableStateOf(CoinListState())
@@ -45,20 +48,22 @@ class CoinListViewModel @Inject constructor(private val repository: CoinReposito
     private fun getCoins(
         query: String = state.searchQuery.lowercase()
     ) {
-        viewModelScope.launch {
-            repository.getCoins(query)
-                .collect {result ->
-                    when(result){
-                        is Resource.Success -> {
-                            result.data?.let { list ->
-                                state = state.copy(
-                                    coins = list
-                                )
-                            }
-                        }
-                        is Resource.Error -> Unit
-                    }
+
+        getCoinsUseCase(query).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = CoinListState(coins = result.data ?: emptyList())
                 }
-        }
+                is Resource.Error -> {
+                    _state.value = CoinListState(
+                        error = result.message ?: "An unexpected error occured"
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = CoinListState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+
     }
 }

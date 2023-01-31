@@ -1,12 +1,10 @@
 package com.plcoding.cryptocurrencyappyt.domain.repository
 
-import com.plcoding.cryptocurrencyappyt.common.Resource
 import com.plcoding.cryptocurrencyappyt.data.remote.dto.CoinDetailDto
-import com.plcoding.cryptocurrencyappyt.domain.model.Coin
-import kotlinx.coroutines.flow.Flow
+import com.plcoding.cryptocurrencyappyt.data.remote.dto.CoinDto
 
 interface CoinRepository {
     //suspend fun getCoins(): Flow<Resource<List<Coin>>>
-    suspend fun getCoins(query: String): Flow<Resource<List<Coin>>>
+    suspend fun getCoins(query: String): List<CoinDto>
     suspend fun getCoinById(coinId: String): CoinDetailDto
 }
